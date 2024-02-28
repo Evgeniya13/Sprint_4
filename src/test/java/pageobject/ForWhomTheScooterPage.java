@@ -1,4 +1,4 @@
-package PageObject;
+package pageobject;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -38,6 +38,10 @@ public class ForWhomTheScooterPage {
         this.driver = driver;
     }
 
+    public void checkTitle() {
+        Assert.assertEquals(driver.findElement(title).getText(), "Для кого самокат");
+    }
+
     public void selectStation(String station) {
         driver.findElement(stationField).click();
         driver.findElement(stationField).sendKeys(station);
@@ -45,7 +49,6 @@ public class ForWhomTheScooterPage {
     }
 
     public void fillDataForWhomScooter(String firstName, String familyName, String address, String station, String phone) {
-        Assert.assertEquals(driver.findElement(title).getText(), "Для кого самокат");
         driver.findElement(firstNameField).clear();
         driver.findElement(firstNameField).sendKeys(firstName);
         driver.findElement(familyNameField).clear();

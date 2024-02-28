@@ -1,14 +1,14 @@
-package PageObject;
+package pageobject;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.hamcrest.CoreMatchers.containsString;
 
 import org.hamcrest.MatcherAssert;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AboutTheRentPage {
     private WebDriver driver;
@@ -84,10 +84,11 @@ public class AboutTheRentPage {
     }
 
     public void confirmAndCreateRent() {
+        WebDriverWait wait = new WebDriverWait(driver, 3);
         driver.findElement(orderButton).click();
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(yesInPopUp));
         driver.findElement(yesInPopUp).click();
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(orderIsReady));
         MatcherAssert.assertThat(driver.findElement(orderIsReady).getText(), containsString("Заказ оформлен"));
     }
 }

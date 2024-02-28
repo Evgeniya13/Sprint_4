@@ -1,6 +1,6 @@
-import PageObject.AboutTheRentPage;
-import PageObject.ForWhomTheScooterPage;
-import PageObject.HomePage;
+import pageobject.AboutTheRentPage;
+import pageobject.ForWhomTheScooterPage;
+import pageobject.HomePage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @RunWith(Parameterized.class)
 public class CreateNewRentOfScooterTest {
-    private final String URL = "https://qa-scooter.praktikum-services.ru/";
+    private final static String URL = "https://qa-scooter.praktikum-services.ru/";
     private WebDriver driver;
     private final String firstName;
     private final String familyName;
@@ -25,10 +25,13 @@ public class CreateNewRentOfScooterTest {
     private final String period;
     private final String colorOfScooter;
     private final String comment;
-    private final String browserName;
+    private final String expectedQuestion;
+    private final String expectedAnswer;
 
-    public CreateNewRentOfScooterTest(String browserName, String firstName, String familyName, String address,
-                                      String station, String phone, String period, String colorOfScooter, String comment) {
+
+    public CreateNewRentOfScooterTest(String expectedQuestion, String expectedAnswer, String firstName, String familyName,
+                                      String address, String station, String phone, String period, String colorOfScooter,
+                                      String comment) {
 
         this.firstName = firstName;
         this.familyName = familyName;
@@ -38,22 +41,25 @@ public class CreateNewRentOfScooterTest {
         this.period = period;
         this.colorOfScooter = colorOfScooter;
         this.comment = comment;
-        this.browserName = browserName;
+        this.expectedQuestion = expectedQuestion;
+        this.expectedAnswer = expectedAnswer;
     }
 
     @Parameterized.Parameters
     public static Object[][] getDataForRental() {
         return new Object[][]{
-                {"firefox", "Иван", "Иванов", "Проспект Вернадского 88-1", "Юго-Западная", "+79161234567", "трое суток",
+                {"Сколько это стоит? И как оплатить?", "Сутки — 400 рублей. Оплата курьеру — наличными или картой.",
+                        "Иван", "Иванов", "Проспект Вернадского 88-1", "Юго-Западная", "+79161234567", "трое суток",
                         "чёрный жемчуг", "Привет!"},
-                {"chrome", "Петр", "Петров", "Большая Садовая, 302-бис, 5 этаж, кв. 50", "Маяковская", "+79874561230",
+                {"Можно ли заказать самокат прямо на сегодня?", "Только начиная с завтрашнего дня. Но скоро станем расторопнее.",
+                        "Петр", "Петров", "Большая Садовая, 302-бис, 5 этаж, кв. 50", "Маяковская", "+79874561230",
                         "четверо суток", "серая безысходность", "Пароль: Воланд"},
         };
     }
 
     @Before
     public void setWebDriver() {
-        driver = createDriver(this.browserName);
+        driver = createDriver("chrome");
         driver.manage().window().maximize();
         driver.get(URL);
         Cookie newCookie = new Cookie("Cartoshka", "true");
@@ -67,14 +73,19 @@ public class CreateNewRentOfScooterTest {
     @Test
     public void checkFAQ() {
         HomePage homepage = new HomePage(driver);
-        homepage.checkFAQ();
+        homepage.checkTitle();
+        homepage.checkFAQ(expectedQuestion, expectedAnswer);
+        homepage.clickOnOrderSecondButton();
+        ForWhomTheScooterPage forWhomTheScooterPage = new ForWhomTheScooterPage(driver);
+        forWhomTheScooterPage.checkTitle();
     }
 
     @Test
     public void createNewOrder() {
         HomePage homepage = new HomePage(driver);
-        homepage.clickOnOrderButton();
+        homepage.clickOnOrderFirstButton();
         ForWhomTheScooterPage forWhomTheScooterPage = new ForWhomTheScooterPage(driver);
+        forWhomTheScooterPage.checkTitle();
         forWhomTheScooterPage.fillDataForWhomScooter(firstName, familyName, address, station, phone);
         forWhomTheScooterPage.clickOnNextButton();
         AboutTheRentPage aboutTheRentPage = new AboutTheRentPage(driver, period, colorOfScooter);
@@ -92,10 +103,10 @@ public class CreateNewRentOfScooterTest {
         WebDriver driver = null;
         if (browser.equalsIgnoreCase("chrome")) {
             System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\chromedriver-win64\\chromedriver.exe");
+
             // Создаем экземпляр ChromeDriver
             driver = new ChromeDriver();
         } else if (browser.equalsIgnoreCase("firefox")) {
-            System.setProperty("webdriver.gecko.driver", "C:\\WebDriver\\bin\\firefox\\geckodriver.exe");
             // Создаем экземпляр FirefoxDriver
             driver = new FirefoxDriver();
         } else {
