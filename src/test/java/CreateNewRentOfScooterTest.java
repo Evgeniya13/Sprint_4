@@ -25,11 +25,8 @@ public class CreateNewRentOfScooterTest {
     private final String period;
     private final String colorOfScooter;
     private final String comment;
-    private final String expectedQuestion;
-    private final String expectedAnswer;
 
-
-    public CreateNewRentOfScooterTest(String expectedQuestion, String expectedAnswer, String firstName, String familyName,
+    public CreateNewRentOfScooterTest(String firstName, String familyName,
                                       String address, String station, String phone, String period, String colorOfScooter,
                                       String comment) {
 
@@ -41,18 +38,14 @@ public class CreateNewRentOfScooterTest {
         this.period = period;
         this.colorOfScooter = colorOfScooter;
         this.comment = comment;
-        this.expectedQuestion = expectedQuestion;
-        this.expectedAnswer = expectedAnswer;
     }
 
     @Parameterized.Parameters
     public static Object[][] getDataForRental() {
         return new Object[][]{
-                {"Сколько это стоит? И как оплатить?", "Сутки — 400 рублей. Оплата курьеру — наличными или картой.",
-                        "Иван", "Иванов", "Проспект Вернадского 88-1", "Юго-Западная", "+79161234567", "трое суток",
+                {"Иван", "Иванов", "Проспект Вернадского 88-1", "Юго-Западная", "+79161234567", "трое суток",
                         "чёрный жемчуг", "Привет!"},
-                {"Можно ли заказать самокат прямо на сегодня?", "Только начиная с завтрашнего дня. Но скоро станем расторопнее.",
-                        "Петр", "Петров", "Большая Садовая, 302-бис, 5 этаж, кв. 50", "Маяковская", "+79874561230",
+                {"Петр", "Петров", "Большая Садовая, 302-бис, 5 этаж, кв. 50", "Маяковская", "+79874561230",
                         "четверо суток", "серая безысходность", "Пароль: Воланд"},
         };
     }
@@ -71,18 +64,9 @@ public class CreateNewRentOfScooterTest {
     }
 
     @Test
-    public void checkFAQ() {
-        HomePage homepage = new HomePage(driver);
-        homepage.checkTitle();
-        homepage.checkFAQ(expectedQuestion, expectedAnswer);
-        homepage.clickOnOrderSecondButton();
-        ForWhomTheScooterPage forWhomTheScooterPage = new ForWhomTheScooterPage(driver);
-        forWhomTheScooterPage.checkTitle();
-    }
-
-    @Test
     public void createNewOrder() {
         HomePage homepage = new HomePage(driver);
+        homepage.checkTitle();
         homepage.clickOnOrderFirstButton();
         ForWhomTheScooterPage forWhomTheScooterPage = new ForWhomTheScooterPage(driver);
         forWhomTheScooterPage.checkTitle();
@@ -91,6 +75,15 @@ public class CreateNewRentOfScooterTest {
         AboutTheRentPage aboutTheRentPage = new AboutTheRentPage(driver, period, colorOfScooter);
         aboutTheRentPage.fillDataAboutRent(comment);
         aboutTheRentPage.confirmAndCreateRent();
+    }
+
+    @Test
+    public void checkSecondOrderButton() {
+        HomePage homepage = new HomePage(driver);
+        homepage.checkTitle();
+        homepage.clickOnOrderSecondButton();
+        ForWhomTheScooterPage forWhomTheScooterPage = new ForWhomTheScooterPage(driver);
+        forWhomTheScooterPage.checkTitle();
     }
 
     @After

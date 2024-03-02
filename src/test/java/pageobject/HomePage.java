@@ -33,7 +33,7 @@ public class HomePage {
     }
 
     public void clickOnOrderSecondButton() {
-        ((JavascriptExecutor) driver).executeScript("window.scrollBy(0,-1000)");
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", driver.findElement(orderButtonSecond));
         driver.findElement(orderButtonSecond).click();
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
     }
